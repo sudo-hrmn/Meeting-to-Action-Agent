@@ -5,7 +5,6 @@
 [![Python](https://img.shields.io/badge/Python-3.11%2B-blue)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green)](https://fastapi.tiangolo.com)
 [![Tests](https://img.shields.io/badge/Tests-37%20passing-brightgreen)]()
-[![License](https://img.shields.io/badge/License-MIT-yellow)]()
 
 ---
 
