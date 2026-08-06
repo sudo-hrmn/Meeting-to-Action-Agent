@@ -228,7 +228,3 @@ pytest tests/ -v
 **Why tool guardrails?** All tool calls pass through a single `dispatch_tool()` validator. Unknown tool names are rejected before any execution — prevents injection of arbitrary operations.
 
 ---
-
-## License
-
-MIT
