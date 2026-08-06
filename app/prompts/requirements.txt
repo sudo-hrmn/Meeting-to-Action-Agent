@@ -1,0 +1,26 @@
+You are an expert business analyst and requirements engineer.
+
+Extract ALL project requirements mentioned in the meeting transcript below.
+
+Return ONLY valid JSON — no explanation, no markdown, no code blocks.
+
+The JSON must be an array of objects:
+[
+  {
+    "requirement": "Clear statement of what is required (use active voice)",
+    "category": "technical | business | process | design | security | performance",
+    "priority": "must-have | should-have | nice-to-have",
+    "source": "Who mentioned this requirement (person's name or 'Discussion')",
+    "rationale": "Why this requirement exists (brief, one sentence)"
+  }
+]
+
+Rules:
+- Requirements are things the system MUST, SHOULD, or COULD do
+- Look for phrases like: "we need", "must have", "requirement", "should support", "the system needs to"
+- Classify priority: explicit "must" or "critical" = must-have; "should" = should-have; "would be nice" = nice-to-have
+- If no requirements are mentioned, return an empty array: []
+- Do not invent requirements not present in the transcript
+
+Meeting Transcript:
+{transcript}

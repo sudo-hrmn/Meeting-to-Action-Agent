@@ -1,0 +1,43 @@
+"""
+Schemas for RAG document ingestion and question answering.
+"""
+import uuid
+from typing import Optional
+from pydantic import BaseModel, Field
+
+
+class DocumentIngestRequest(BaseModel):
+    """Request to ingest a text document into the knowledge base."""
+    content: str = Field(..., min_length=20, description="Document text content")
+    filename: str = Field(..., min_length=1, max_length=255, description="Document filename for attribution")
+
+
+class DocumentIngestResponse(BaseModel):
+    """Response after successful document ingestion."""
+    doc_id: str
+    filename: str
+    chunks_created: int
+    status: str
+    message: str
+
+
+class QuestionRequest(BaseModel):
+    """Request to ask a question against the knowledge base."""
+    question: str = Field(..., min_length=5, description="Question to answer from the knowledge base")
+
+
+class SourceReference(BaseModel):
+    """A retrieved source chunk with relevance score."""
+    source: str = Field(..., description="Source document filename")
+    excerpt: str = Field(..., description="Relevant excerpt from the source")
+    relevance_score: float = Field(..., description="Similarity score (lower = more similar in FAISS)")
+
+
+class QuestionAnswerResponse(BaseModel):
+    """Response from the RAG Q&A system."""
+    question: str
+    answer: str
+    confidence: str = Field(..., description="high | medium | low")
+    reasoning: str = Field(..., description="How the answer was derived from sources")
+    sources: list[SourceReference] = Field(default_factory=list)
+    sources_used: list[str] = Field(default_factory=list)

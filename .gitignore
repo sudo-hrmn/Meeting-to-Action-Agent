@@ -1,0 +1,57 @@
+# Meeting-to-Action Agent — .gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Environment variables (NEVER commit)
+.env
+
+# Database
+*.db
+*.sqlite3
+
+# FAISS indexes (will be regenerated)
+faiss_index/
+
+# ChromaDB (auto-generated vector store)
+chroma_db/
+
+# Logs
+*.log
+logs/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Folder
+Interview Questions
+graphify-out
+
+# files
+rules.md
+# Planning (tracking in git as per config)
+# .planning/   <-- tracked intentionally
