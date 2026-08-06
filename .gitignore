@@ -47,11 +47,11 @@ htmlcov/
 .DS_Store
 Thumbs.db
 
-# Folder
-Interview Questions
-graphify-out
+# Ignored directories
+Interview Questions/
+graphify-out/
+.agents/
+.planning/
 
-# files
+# Ignored files
 rules.md
-# Planning (tracking in git as per config)
-# .planning/   <-- tracked intentionally
