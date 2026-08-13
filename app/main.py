@@ -47,6 +47,20 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     logger.info(f"Debug mode: {settings.debug}")
     logger.info(f"LLM model: {settings.groq_model}")
 
+    # Configure LangSmith tracing if API key is provided in .env
+    import os
+    langsmith_key = settings.langsmith_api_key or settings.langchain_api_key or os.getenv("LANGSMITH_API_KEY") or os.getenv("LANGCHAIN_API_KEY")
+    if langsmith_key:
+        os.environ["LANGCHAIN_TRACING_V2"] = settings.langsmith_tracing
+        os.environ["LANGCHAIN_API_KEY"] = langsmith_key
+        os.environ["LANGSMITH_API_KEY"] = langsmith_key
+        os.environ["LANGCHAIN_PROJECT"] = settings.langsmith_project
+        os.environ["LANGSMITH_PROJECT"] = settings.langsmith_project
+        os.environ["LANGCHAIN_ENDPOINT"] = settings.langsmith_endpoint
+        logger.info(f"LangSmith tracing enabled | project={settings.langsmith_project}")
+    else:
+        logger.info("LangSmith tracing disabled (LANGSMITH_API_KEY not set)")
+
     # Validate critical API keys on startup — fail fast rather than fail mid-request
     if not settings.groq_api_key:
         raise RuntimeError(

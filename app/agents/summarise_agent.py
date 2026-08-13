@@ -11,6 +11,7 @@ Why this design:
 Groq model used: llama-3.1-8b-instant (free tier, very fast)
 """
 import json
+import random
 import re
 from pathlib import Path
 from typing import Optional
@@ -23,6 +24,66 @@ from app.config.logging import get_logger
 from app.schemas.meeting import SummaryResult
 
 logger = get_logger(__name__)
+
+SAMPLE_DOMAINS = [
+    "AI Feature Integration & Roadmap",
+    "Security Audit & Compliance Review",
+    "Q4 Cloud Infrastructure & Migration",
+    "Mobile App UI/UX Redesign",
+    "Payment Gateway & Billing Escalation",
+    "Customer Support Automation & Chatbot",
+]
+
+NAMES_POOL = [
+    "Alex", "Jordan", "Priya", "Marcus", "Elena", "Liam", "Sophia", "Wei",
+    "Fatima", "Carlos", "Hannah", "Rohan", "Maya", "Tariq", "Chloe", "Diego",
+    "Sarah", "Vikram", "Nina", "David", "Amina", "Kiran", "Sam", "Olivia",
+    "Lucas", "Zainab", "Mateo", "Ananya", "Julian", "Fatima"
+]
+
+
+async def generate_sample_transcript() -> dict[str, str]:
+    """
+    Generate a realistic, synthetic meeting transcript dynamically using LLM with random names.
+    Returns a dict with 'title' and 'transcript'.
+    """
+    domain = random.choice(SAMPLE_DOMAINS)
+    selected_names = random.sample(NAMES_POOL, 4)
+    n1, n2, n3, n4 = selected_names
+    names_str = f"{n1}, {n2}, {n3}, and {n4}"
+
+    prompt = (
+        f"Generate a raw, unscripted conversational meeting transcript between 4 team members named {names_str} discussing '{domain}'.\n\n"
+        f"CRITICAL FORMAT RULES:\n"
+        f"1. Output ONLY spoken dialogue lines using these exact names: '{n1} (PM): ...', '{n2} (Engineering): ...', '{n3} (Design): ...', '{n4} (Analyst): ...'.\n"
+        f"2. DO NOT include headers, titles, 'Attendees', 'Action Items', 'Decisions', or summary bullet points at the end. NEVER format with Markdown headers or lists.\n"
+        f"3. Make it sound like a real natural spoken conversation: casual phrasing ('yeah totally', 'hang on', 'quick check'), natural back-and-forth, and conversational flow.\n"
+        f"4. Weave tasks, deadlines, decisions, and risks naturally into the spoken dialogue (e.g., '{n2}, can you take care of the auth API by Friday?' -> 'Yeah sure, I'll own that and push it before EOD Friday.').\n"
+        f"5. Assign concrete action items to {names_str} with explicit deadlines ('by Friday EOD', 'tomorrow afternoon', 'September 15th').\n"
+        f"6. Total length should be around 180-280 words.\n\n"
+        f"Return ONLY raw dialogue using names {names_str}. No headers, no bullet points, no extra commentary."
+    )
+    llm = _get_llm()
+    try:
+        response = await llm.ainvoke([HumanMessage(content=prompt)])
+        transcript_text = str(response.content).strip()
+        # Post-processing clean-up: remove any leftover headers if LLM included them
+        lines = [line for line in transcript_text.splitlines() if not line.startswith(("#", "**Attendees", "**Action Items", "**Meeting Transcript", "**Decisions", "- "))]
+        transcript_text = "\n\n".join([l for l in lines if l.strip()])
+    except Exception as e:
+        logger.warning(f"Failed to generate dynamic transcript | fallback used | error={e}")
+        transcript_text = (
+            f"{n1} (PM): Hey everyone, let me share my screen real quick... okay, can everyone see the Q3 roadmap?\n\n"
+            f"{n2} (Eng): Yeah we can see it. So on the backend side, auth is completely done. Payment integration is our main bottleneck right now — I'll take full ownership of that and aim to ship it before September 15th.\n\n"
+            f"{n3} (UX): Quick check from design — payment flow wireframes are about 80% finished. I should have the final Figma components ready by Friday EOD. But one major risk though: if we don't get the updated Stripe API specs from vendor by Tuesday, that September deadline will slip.\n\n"
+            f"{n4} (Analyst): Good point {n3}. Also, I'm working on the revenue projection model. I'll finalize the business case metrics and share the deck by September 1st.\n\n"
+            f"{n1} (PM): Perfect. So we're officially deciding to move forward with Stripe. {n2}, let's make sure we track that vendor risk closely."
+        )
+    return {
+        "title": f"{domain} Sync",
+        "transcript": transcript_text,
+    }
+
 
 # Load prompt once at module import time
 _PROMPT_PATH = Path(__file__).parent.parent / "prompts" / "summarise.txt"

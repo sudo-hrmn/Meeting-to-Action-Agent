@@ -10,6 +10,8 @@ python-multipart>=0.0.12
 langchain>=0.3.7
 langchain-groq>=0.2.1
 langchain-community>=0.3.7
+langsmith
+openai
 
 # RAG — Vector Store & Embeddings (Phase 3)
 # chromadb uses ONNX embeddings internally

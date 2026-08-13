@@ -48,7 +48,6 @@ htmlcov/
 Thumbs.db
 
 # Ignored directories
-Interview Questions/
 graphify-out/
 .agents/
 .planning/

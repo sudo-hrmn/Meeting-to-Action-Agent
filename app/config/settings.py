@@ -26,6 +26,13 @@ class Settings(BaseSettings):
     tavily_api_key: str = ""
     huggingfacehub_api_token: str = ""
 
+    # --- LangSmith Tracing ---
+    langsmith_api_key: str = ""
+    langchain_api_key: str = ""
+    langsmith_tracing: str = "true"
+    langsmith_project: str = "Meeting-to-Action-Agent"
+    langsmith_endpoint: str = "https://api.smith.langchain.com"
+
     # --- App Config ---
     app_name: str = "Meeting-to-Action Agent"
     app_version: str = "0.1.0"

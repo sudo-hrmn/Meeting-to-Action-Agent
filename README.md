@@ -26,6 +26,34 @@ Plus a **RAG knowledge base** — ingest your documents and ask questions agains
 
 ---
 
+## 📸 Screenshots & UI Showcase
+
+| Streamlit Interface Showcase |
+|---|
+| ![Upload & Analyse](assets/screenshots/screenshot_8.png) |
+| *Streamlit Dashboard — Upload Transcript & AI Meeting Analysis* |
+| ![Analysis Results](assets/screenshots/screenshot_9.png) |
+| *Extracted Intelligence — Summary, Topics, Decisions, Action Items & Risks* |
+| ![Knowledge Base RAG](assets/screenshots/screenshot_2.png) |
+| *Knowledge Base RAG — Document Ingestion & Context Grounded Q&A* |
+| ![Workflow Automation](assets/screenshots/screenshot_5.png) |
+| *Automated Workflow Tools — Email Draft, CSV Export & Calendar Events* |
+
+<details>
+<summary><b>Click to view all screenshots</b></summary>
+
+| Feature | Preview |
+|---|---|
+| **Meeting Transcript Input** | ![Meeting Input](assets/screenshots/screenshot_1.png) |
+| **Document Ingestion** | ![Doc Ingest](assets/screenshots/screenshot_3.png) |
+| **RAG Q&A Engine** | ![RAG Engine](assets/screenshots/screenshot_4.png) |
+| **Email Draft Tool** | ![Email Tool](assets/screenshots/screenshot_6.png) |
+| **Meeting History** | ![History](assets/screenshots/screenshot_7.png) |
+
+</details>
+
+---
+
 ## Architecture & System Flow
 
 ```mermaid

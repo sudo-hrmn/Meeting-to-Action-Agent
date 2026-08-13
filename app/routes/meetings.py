@@ -26,12 +26,30 @@ from app.services.meeting_service import (
     list_meetings,
     save_summary,
 )
-from app.agents.summarise_agent import summarise_meeting
+from app.agents.summarise_agent import summarise_meeting, generate_sample_transcript
 from app.services.report_service import generate_report
 from app.schemas.report import MeetingReportResponse
 
 logger = get_logger(__name__)
 router = APIRouter(prefix="/meetings", tags=["Meetings"])
+
+
+@router.post(
+    "/generate-sample",
+    summary="Generate a synthetic meeting transcript",
+    description="Uses LLM to dynamically generate a realistic sample transcript with owners, deadlines, decisions, and risks.",
+)
+async def generate_sample_meeting():
+    """Generate a dynamic sample transcript using LLM."""
+    try:
+        return await generate_sample_transcript()
+    except Exception as e:
+        logger.error(f"Failed to generate sample meeting | error={e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={"error": "sample_generation_failed", "message": str(e)},
+        )
+
 
 
 @router.post(

@@ -114,18 +114,28 @@ Alice: Absolutely, I'll do that this afternoon. Decided: we're going with Stripe
 
 Bob: Agreed. Let's wrap up. Main actions: I own payment integration by Sep 15, Carol finishes designs by Friday, Alice posts job ads tomorrow and sends Stripe escalation today."""
 
-    col1, col2 = st.columns([5, 1])
+    col1, col2 = st.columns([4, 1.5])
     with col2:
-        if st.button("📋 Example", use_container_width=True):
-            st.session_state["load_example"] = True
+        if st.button("🎲 Generate Example", use_container_width=True, help="Generate a new AI meeting transcript on every click"):
+            with st.spinner("🧠 LLM generating transcript..."):
+                data, status = api_call("post", "/meetings/generate-sample", json={})
+                if data and "transcript" in data:
+                    st.session_state["example_transcript"] = data.get("transcript", "")
+                    st.session_state["example_title"] = data.get("title", "")
+                else:
+                    st.session_state["example_transcript"] = EXAMPLE
+                    st.session_state["example_title"] = "Q3 Planning Sync"
+
+    transcript_val = st.session_state.get("example_transcript", "")
+    title_val = st.session_state.get("example_title", "")
 
     transcript = st.text_area(
         "Paste transcript:",
-        value=EXAMPLE if st.session_state.get("load_example") else "",
+        value=transcript_val,
         height=280,
         placeholder="Alice: Let's discuss the timeline...\nBob: We need to ship by Friday...",
     )
-    title = st.text_input("Meeting title (optional):", placeholder="Q3 Planning — 2026-08-06")
+    title = st.text_input("Meeting title (optional):", value=title_val, placeholder="Q3 Planning — 2026-08-06")
 
     c1, c2, c3 = st.columns([3, 1, 1])
     with c1:
