@@ -70,9 +70,8 @@ graph TD
         ToolRoute --> Dispatcher[Tool Guardrail Dispatcher]
     end
 
-    subgraph Observability & Intelligence
+    subgraph Observability
         Agents -->|Telemetry & Chain Traces| LangSmith[LangSmith Platform]
-        FastAPI -->|AST Codebase Index| Graphify[Graphify Knowledge Graph]
     end
 
     subgraph External & Storage
@@ -98,7 +97,6 @@ graph TD
 | Backend API | FastAPI + Uvicorn |
 | LLM Inference | Groq (Llama 3.1 8B Instant) — free tier |
 | Observability | LangSmith (Full-stack chain tracing & telemetry) |
-| Codebase Intel | Graphify AST Knowledge Graph (326 nodes, 24 communities) |
 | Agent Framework | LangChain |
 | Vector Database | ChromaDB (local, persistent ONNX embeddings) |
 | Storage | SQLite + aiosqlite (async) |
