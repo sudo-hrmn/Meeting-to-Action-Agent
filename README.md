@@ -61,13 +61,18 @@ graph TD
     Client([Streamlit UI / Frontend]) <-->|HTTP / REST API| FastAPI[FastAPI Backend Server]
 
     subgraph Backend Core
-        FastAPI --> MeetingRoute[Meeting Routes]
-        FastAPI --> DocRoute[Document / RAG Routes]
-        FastAPI --> ToolRoute[Workflow Tool Routes]
+        FastAPI --> MeetingRoute[Meeting Routes: Upload, Summarise, Sample Gen]
+        FastAPI --> DocRoute[Document / RAG Routes: Ingest, Q&A]
+        FastAPI --> ToolRoute[Workflow Tool Routes: Automate]
         
         MeetingRoute --> Agents[AI Agents: Summarise, Actions, Risks, Reqs]
         DocRoute --> RAG[RAG Agent Pipeline]
         ToolRoute --> Dispatcher[Tool Guardrail Dispatcher]
+    end
+
+    subgraph Observability & Intelligence
+        Agents -->|Telemetry & Chain Traces| LangSmith[LangSmith Platform]
+        FastAPI -->|AST Codebase Index| Graphify[Graphify Knowledge Graph]
     end
 
     subgraph External & Storage
@@ -92,12 +97,14 @@ graph TD
 |---|---|
 | Backend API | FastAPI + Uvicorn |
 | LLM Inference | Groq (Llama 3.1 8B Instant) — free tier |
+| Observability | LangSmith (Full-stack chain tracing & telemetry) |
+| Codebase Intel | Graphify AST Knowledge Graph (326 nodes, 24 communities) |
 | Agent Framework | LangChain |
-| Vector Database | ChromaDB (local, persistent) |
+| Vector Database | ChromaDB (local, persistent ONNX embeddings) |
 | Storage | SQLite + aiosqlite (async) |
 | Frontend | Streamlit |
 | Validation | Pydantic v2 |
-| Testing | pytest + pytest-asyncio |
+| Testing | pytest + pytest-asyncio (37 tests) |
 
 ---
 
