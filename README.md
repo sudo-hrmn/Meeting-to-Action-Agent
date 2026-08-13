@@ -44,7 +44,6 @@ Plus a **RAG knowledge base** — ingest your documents and ask questions agains
 
 | Feature | Preview |
 |---|---|
-| **Meeting Transcript Input** | ![Meeting Input](assets/screenshots/screenshot_1.png) |
 | **Document Ingestion** | ![Doc Ingest](assets/screenshots/screenshot_3.png) |
 | **RAG Q&A Engine** | ![RAG Engine](assets/screenshots/screenshot_4.png) |
 | **Email Draft Tool** | ![Email Tool](assets/screenshots/screenshot_6.png) |
