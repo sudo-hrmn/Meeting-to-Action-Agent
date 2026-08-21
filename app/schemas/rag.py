@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 
 class DocumentIngestRequest(BaseModel):
     """Request to ingest a text document into the knowledge base."""
-    content: str = Field(..., min_length=20, description="Document text content")
+    content: str = Field(..., min_length=20, max_length=500000, description="Document text content")
     filename: str = Field(..., min_length=1, max_length=255, description="Document filename for attribution")
 
 
@@ -23,7 +23,10 @@ class DocumentIngestResponse(BaseModel):
 
 class QuestionRequest(BaseModel):
     """Request to ask a question against the knowledge base."""
-    question: str = Field(..., min_length=5, description="Question to answer from the knowledge base")
+    question: str = Field(..., min_length=3, max_length=2000, description="Question to answer from the knowledge base")
+    filename: Optional[str] = Field(default=None, description="Optional document filename to restrict search scope")
+    doc_id: Optional[str] = Field(default=None, description="Optional document ID to restrict search scope")
+
 
 
 class SourceReference(BaseModel):

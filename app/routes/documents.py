@@ -13,10 +13,25 @@ from app.schemas.rag import (
     QuestionAnswerResponse,
     SourceReference,
 )
-from app.agents.rag_agent import ingest_document, answer_question
+from app.agents.rag_agent import ingest_document, answer_question, get_ingested_sources
+
+from fastapi import APIRouter, HTTPException, status, UploadFile, File, Depends
+from app.config.security import verify_api_key
 
 logger = get_logger(__name__)
-router = APIRouter(prefix="/documents", tags=["RAG — Documents & Q&A"])
+router = APIRouter(prefix="/documents", tags=["RAG — Documents & Q&A"], dependencies=[Depends(verify_api_key)])
+
+
+@router.get(
+    "/sources",
+    summary="List ingested document sources",
+    description="Returns a list of unique document filenames present in the knowledge base.",
+)
+async def list_sources_endpoint() -> JSONResponse:
+    """Return unique source filenames stored in ChromaDB."""
+    sources = get_ingested_sources()
+    return JSONResponse(content={"sources": sources, "count": len(sources)})
+
 
 
 @router.post(
@@ -62,6 +77,9 @@ async def ingest_document_endpoint(request: DocumentIngestRequest) -> DocumentIn
         )
 
 
+from app.config.security import sanitize_filename
+from app.config.settings import get_settings
+
 @router.post(
     "/ingest/file",
     response_model=DocumentIngestResponse,
@@ -69,7 +87,7 @@ async def ingest_document_endpoint(request: DocumentIngestRequest) -> DocumentIn
     summary="Upload and ingest a file",
     description=(
         "Upload a .txt, .md, or .pdf file directly. "
-        "The file will be read, chunked, embedded, and stored in FAISS."
+        "The file will be read, chunked, embedded, and stored in ChromaDB."
     ),
 )
 async def ingest_file_endpoint(file: UploadFile = File(...)) -> DocumentIngestResponse:
@@ -78,11 +96,19 @@ async def ingest_file_endpoint(file: UploadFile = File(...)) -> DocumentIngestRe
 
     PDF files are parsed with pypdf; text/markdown are read directly.
     """
+    settings = get_settings()
     doc_id = str(uuid.uuid4())
-    filename = file.filename or "uploaded_file"
+    raw_filename = file.filename or "uploaded_file"
+    filename = sanitize_filename(raw_filename)
 
     try:
         raw = await file.read()
+        max_bytes = settings.max_file_size_mb * 1024 * 1024
+        if len(raw) > max_bytes:
+            raise HTTPException(
+                status_code=status.HTTP_413_CONTENT_TOO_LARGE,
+                detail={"error": "file_too_large", "message": f"File size exceeds maximum allowed limit of {settings.max_file_size_mb}MB."},
+            )
 
         # PDF handling
         if filename.lower().endswith(".pdf"):
@@ -101,6 +127,8 @@ async def ingest_file_endpoint(file: UploadFile = File(...)) -> DocumentIngestRe
             **result,
             message=f"File '{filename}' uploaded and ingested with {result['chunks_created']} chunks.",
         )
+    except HTTPException:
+        raise
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -110,7 +138,7 @@ async def ingest_file_endpoint(file: UploadFile = File(...)) -> DocumentIngestRe
         logger.error(f"File ingestion failed | filename={filename} | error={e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail={"error": "file_ingestion_failed", "message": str(e)},
+            detail={"error": "file_ingestion_failed", "message": "An error occurred while processing the file."},
         )
 
 
@@ -133,7 +161,11 @@ async def ask_question_endpoint(request: QuestionRequest) -> QuestionAnswerRespo
     - Returns answer with confidence level and source references
     """
     try:
-        result = await answer_question(request.question)
+        result = await answer_question(
+            question=request.question,
+            filename=request.filename,
+            doc_id=request.doc_id,
+        )
         sources = [
             SourceReference(
                 source=s.get("source", "Unknown"),

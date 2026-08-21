@@ -30,8 +30,11 @@ from app.agents.summarise_agent import summarise_meeting, generate_sample_transc
 from app.services.report_service import generate_report
 from app.schemas.report import MeetingReportResponse
 
+from fastapi import APIRouter, HTTPException, status, Depends
+from app.config.security import verify_api_key
+
 logger = get_logger(__name__)
-router = APIRouter(prefix="/meetings", tags=["Meetings"])
+router = APIRouter(prefix="/meetings", tags=["Meetings"], dependencies=[Depends(verify_api_key)])
 
 
 @router.post(

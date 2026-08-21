@@ -103,13 +103,18 @@ app = FastAPI(
     openapi_url="/openapi.json",
 )
 
+from app.config.security import SecurityHeadersMiddleware, RateLimiterMiddleware
+
 # ─── Middleware ────────────────────────────────────────────────────────────────
+
+app.add_middleware(SecurityHeadersMiddleware)
+app.add_middleware(RateLimiterMiddleware, requests_per_minute=settings.rate_limit_per_minute)
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.allowed_origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 

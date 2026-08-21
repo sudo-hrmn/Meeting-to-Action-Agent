@@ -8,7 +8,7 @@ Why this design:
 - If JSON parsing fails we retry once with a correction prompt before raising
 - LangChain wraps the Groq client so we can swap models or providers by changing config
 
-Groq model used: llama-3.1-8b-instant (free tier, very fast)
+Groq model used: groq/compound-mini (free tier, very fast)
 """
 import json
 import random

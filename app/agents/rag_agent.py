@@ -131,12 +131,26 @@ def _extract_json_object(text: str) -> dict:
         }
 
 
-async def answer_question(question: str) -> dict:
+def get_ingested_sources() -> list[str]:
+    """Return a list of unique source filenames present in the vector store."""
+    collection = _get_collection()
+    if collection.count() == 0:
+        return []
+    metas = collection.get(include=["metadatas"])["metadatas"]
+    sources = sorted(list({m.get("source") for m in metas if m and m.get("source")}))
+    return sources
+
+
+async def answer_question(
+    question: str,
+    filename: Optional[str] = None,
+    doc_id: Optional[str] = None,
+) -> dict:
     """
     Retrieval-augmented question answering using ChromaDB + Groq.
 
     Steps:
-    1. Query ChromaDB for top-k chunks similar to the question
+    1. Query ChromaDB for top-k chunks similar to the question (filtered by filename/doc_id if provided)
     2. Build context string from retrieved chunks with source attribution
     3. Call Groq LLM with question + grounded context
     4. Parse structured JSON response
@@ -156,14 +170,39 @@ async def answer_question(question: str) -> dict:
             "sources_used": [],
         }
 
-    logger.info(f"RAG query | question={question[:80]!r}")
+    logger.info(f"RAG query | question={question[:80]!r} | filename_filter={filename} | doc_id_filter={doc_id}")
 
-    # Similarity search
-    results = collection.query(
-        query_texts=[question],
-        n_results=min(TOP_K_RESULTS, collection.count()),
-        include=["documents", "metadatas", "distances"],
-    )
+    # Build metadata filter if specified
+    where_filter = None
+    if filename:
+        where_filter = {"source": filename}
+    elif doc_id:
+        where_filter = {"doc_id": doc_id}
+
+    if where_filter:
+        matching_ids = collection.get(where=where_filter)["ids"]
+        if not matching_ids:
+            target_name = filename or doc_id
+            return {
+                "answer": f"No document chunks found matching target source '{target_name}' in the knowledge base.",
+                "confidence": "high",
+                "reasoning": f"Metadata filter for '{target_name}' matched 0 chunks.",
+                "sources": [],
+                "sources_used": [],
+            }
+        n_results = min(TOP_K_RESULTS, len(matching_ids))
+        results = collection.query(
+            query_texts=[question],
+            n_results=n_results,
+            where=where_filter,
+            include=["documents", "metadatas", "distances"],
+        )
+    else:
+        results = collection.query(
+            query_texts=[question],
+            n_results=min(TOP_K_RESULTS, collection.count()),
+            include=["documents", "metadatas", "distances"],
+        )
 
     docs = results["documents"][0]
     metas = results["metadatas"][0]
@@ -213,3 +252,4 @@ async def answer_question(question: str) -> dict:
 
     logger.info(f"RAG answer ready | confidence={result.get('confidence', 'unknown')}")
     return result
+

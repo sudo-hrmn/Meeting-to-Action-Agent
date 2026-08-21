@@ -44,12 +44,16 @@ class Settings(BaseSettings):
     database_path: str = "./meeting_agent.db"
 
     # --- LLM Config ---
-    groq_model: str = "llama-3.1-8b-instant"
+    groq_model: str = "groq/compound-mini"
     llm_temperature: float = 0.1
     llm_max_tokens: int = 2048
 
-    # --- CORS ---
+    # --- CORS & Security ---
     allowed_origins: list[str] = ["http://localhost:8501", "http://127.0.0.1:8501"]
+    api_key: str = ""  # If set, endpoints require X-API-Key header
+    rate_limit_per_minute: int = 120
+    max_file_size_mb: int = 10
+    max_text_ingest_length: int = 500000
 
 
 @lru_cache()

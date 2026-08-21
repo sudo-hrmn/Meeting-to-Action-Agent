@@ -8,8 +8,11 @@ from app.schemas.tools import ToolRunRequest, ToolRunResponse, AvailableToolsRes
 from app.tools.workflow_tools import dispatch_tool, AVAILABLE_TOOLS, ToolValidationError
 from app.services.meeting_service import get_meeting
 
+from fastapi import APIRouter, HTTPException, status, Depends
+from app.config.security import verify_api_key
+
 logger = get_logger(__name__)
-router = APIRouter(prefix="/tools", tags=["Tools — Workflow Automation"])
+router = APIRouter(prefix="/tools", tags=["Tools — Workflow Automation"], dependencies=[Depends(verify_api_key)])
 
 
 @router.get(
