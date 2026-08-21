@@ -28,28 +28,39 @@ Plus a **RAG knowledge base** — ingest your documents and ask questions agains
 
 ## 📸 Screenshots & UI Showcase
 
-| Streamlit Interface Showcase |
-|---|
-| ![Upload & Analyse](assets/screenshots/screenshot_8.png) |
-| *Streamlit Dashboard — Upload Transcript & AI Meeting Analysis* |
-| ![Analysis Results](assets/screenshots/screenshot_9.png) |
-| *Extracted Intelligence — Summary, Topics, Decisions, Action Items & Risks* |
-| ![Knowledge Base RAG](assets/screenshots/screenshot_2.png) |
-| *Knowledge Base RAG — Document Ingestion & Context Grounded Q&A* |
-| ![Workflow Automation](assets/screenshots/screenshot_5.png) |
-| *Automated Workflow Tools — Email Draft, CSV Export & Calendar Events* |
+### 1 · Upload & Analyse
+![Upload & Analyse — Submit Meeting Transcript](assets/screenshots/Screenshot%20From%202026-08-21%2019-40-33.png)
+*Paste or generate a meeting transcript, set a title, and fire off AI analysis in one click. The **SYSTEM ONLINE** badge confirms the backend is live.*
 
-<details>
-<summary><b>Click to view all screenshots</b></summary>
+---
 
-| Feature | Preview |
-|---|---|
-| **Document Ingestion** | ![Doc Ingest](assets/screenshots/screenshot_3.png) |
-| **RAG Q&A Engine** | ![RAG Engine](assets/screenshots/screenshot_4.png) |
-| **Email Draft Tool** | ![Email Tool](assets/screenshots/screenshot_6.png) |
-| **Meeting History** | ![History](assets/screenshots/screenshot_7.png) |
+### 2 · Executive Summary & Intelligence Matrix
+![Executive Summary & Intelligence Matrix](assets/screenshots/Screenshot%20From%202026-08-21%2019-41-19.png)
+*Instant structured output: executive summary, key topic count, decisions, prioritised action items (with owner + deadline), and identified risks — all extracted by the LangChain agent pipeline.*
 
-</details>
+---
+
+### 3 · Knowledge Base (RAG) — Document Ingestion & Q&A
+![Semantic Knowledge Base & RAG Engine](assets/screenshots/Screenshot%20From%202026-08-21%2020-05-30.png)
+*Upload any TXT, MD, or PDF into ChromaDB (7.7 MB PDF → 1 618 chunks here), then query across the knowledge base with context-grounded answers and a confidence score.*
+
+---
+
+### 4 · Workflow Automation — Follow-Up Email Draft
+![Automated Workflow Dispatcher — Email Draft](assets/screenshots/Screenshot%20From%202026-08-21%2020-06-21.png)
+*Select a tool (`email_draft`, `csv_export`, or `calendar_event`), hit Execute, and get a fully formatted follow-up email auto-populated with every action item, owner, and deadline.*
+
+---
+
+### 5 · Meeting Repository
+![Historic Meetings Repository](assets/screenshots/Screenshot%20From%202026-08-21%2020-06-31.png)
+*134 archived meeting sessions browsable in one view — inspect full details, regenerate a Markdown report, or load any session directly into the Workflow Automation tab.*
+
+---
+
+### 6 · LangSmith Observability Dashboard
+![LangSmith Monitoring — Trace Count & Latency](assets/screenshots/Screenshot%20From%202026-08-21%2020-12-16.png)
+*Full-stack chain telemetry via LangSmith: trace count, P50/P99 latency (~7.5 s per run), and a 0 % error rate across the last hour of production traffic.*
 
 ---
 
