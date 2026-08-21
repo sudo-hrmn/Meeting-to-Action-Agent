@@ -339,7 +339,7 @@ st.markdown(f"""
     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
         <div>
             <h1 class="main-title">⚡ Meeting-to-Action Agent</h1>
-            <p class="sub-title">Production-grade AI meeting intelligence · Automated summaries, action items, RAG Q&A, and workflow execution</p>
+            <p class="sub-title">Transforming discussions into execution · Autonomous meeting summaries, decision logs, RAG knowledge, and action workflows</p>
         </div>
         <div>
             {status_badge_html}
