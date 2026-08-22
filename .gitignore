@@ -56,3 +56,4 @@ graphify-out/
 
 # Ignored files
 rules.md
+pytest.ini
